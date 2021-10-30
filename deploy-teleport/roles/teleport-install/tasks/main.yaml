@@ -33,7 +33,7 @@
   loop:
     - "/var/log/teleport"
     - "/var/lib/teleport"
-   become: yes
+  become: yes
 
 - name: Modify hard/soft nofile limits for teleport
   community.general.pam_limits:
@@ -41,10 +41,12 @@
     limit_type: '-'
     limit_item: nofile
     value: 1065536
-
+  become: yes
+   
 - name: Modify hard nproc limits for teleport
   community.general.pam_limits:
     domain: 'teleport'
     limit_type: '-'
     limit_item: nproc
     value: 1065536
+  become: yes
