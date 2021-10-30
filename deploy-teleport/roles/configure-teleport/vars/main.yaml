@@ -52,9 +52,12 @@ auth_node:
 
 ssh_node:
   port_forwarding: false
-  labels: {}
-  commands: {}
+  commands:
+    - name: hostname
+      command: [hostname]
+      period: 1m0s
   cgroup_path: "/cgroup2"
+  labels: {}
 
 k8s_node:
   kubeconfig_file: "/var/lib/teleport/kubeconfig"
