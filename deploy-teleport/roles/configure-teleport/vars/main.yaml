@@ -2,9 +2,13 @@
 data_dir: "/var/lib/teleport"
 max_connections: 10000
 max_users: 350
-log_output: "/var/log/teleport/teleport.log"
-cache_ttl: 20h
-
+log:
+  output: "/var/log/teleport/teleport.log"
+  severity: "WARN"
+  format: "json"
+audit_event_path: "file:///var/lib/teleport/log"
+cache_ttl: "20h"
+  
 
 # General Node Settings (Required)
 node_type: "" # main_proxy, main_auth, leaf, ssh, k8s, application
@@ -32,6 +36,7 @@ proxy_node:
 
 auth_node:
   cluster_name: ""
+  session_recording: "proxy-sync"
   s3:
     url: ""
     access_key: ""
@@ -49,6 +54,7 @@ ssh_node:
   port_forwarding: false
   labels: {}
   commands: {}
+  cgroup_path: "/cgroup2"
 
 k8s_node:
   kubeconfig_file: "/var/lib/teleport/kubeconfig"
