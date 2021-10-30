@@ -2,28 +2,28 @@
 ---
 
 teleport:
-  data_dir: {{ data_dir }}
+  data_dir: {{ data_dir | default("/var/lib/teleport") }}
   pid_file: /var/run/teleport.pid
   log:
-    output: {{ log.output }}
-    severity: {{ log.severity }}
+    output: {{ log.output | default("/var/log/teleport/teleport.log") }}
+    severity: {{ log.severity | default("WARN") }}
     format:
-      output: {{ log.format }}
+      output: {{ log.format | default("json") }}
   {% if node_type in ["main_proxy", "main_auth", "leaf"] %}
   connection_limits:
-    max_connections: {{ max_connections }}
-    max_users: {{ max_users }}
+    max_connections: {{ max_connections | default("10000") }}
+    max_users: {{ max_users | default("350")}}
   {% endif %}
   {% if node_type in ["main_proxy", "leaf"] %}
   cache:
     type: in-memory
     enabled: true
-    ttl: {{ cache_ttl }}
+    ttl: {{ cache_ttl | default("20h")}}
   {% endif %}
   {% if node_type in ["main_auth", "leaf"] %}
   storage:
     type: dir
-    audit_events_uri: ['{{ audit_event_path }}']
+    audit_events_uri: ['{{ audit_event_path | default("file:///var/lib/teleport/log") }}']
     audit_sessions_uri: "{{ auth_node.s3.url | mandatory }}"    
   {% endif %}
 
@@ -74,11 +74,11 @@ auth_service:
     second_factor: otp
     locking_mode: best_effort
   listen_addr: 0.0.0.0:3025
-  session_recording: {{ auth_node.session_recording }}
-  client_idle_timeout: {{ auth_node.client_idle_timeout }}
-  disconnect_expired_cert: {{ auth_node.disconnect_expired_cert }}
-  keep_alive_interval: {{ auth_node.keep_alive_interval }}
-  keep_alive_count_max: {{ auth_node.keep_alive_count_max }}
+  session_recording: {{ auth_node.session_recording | default("proxy-sync") }}
+  client_idle_timeout: {{ auth_node.client_idle_timeout | default("1h") }}
+  disconnect_expired_cert: {{ auth_node.disconnect_expired_cert | default("no") }}
+  keep_alive_interval: {{ auth_node.keep_alive_interval | default("5m") }}
+  keep_alive_count_max: {{ auth_node.keep_alive_count_max | default("3") }}
   client_idle_timeout_message: "Your connection disconnected due to inactivity"
   message_of_the_day: "Your activity is recorded and kept for auditing"
   {% if auth_node.license_file %}
@@ -89,7 +89,7 @@ auth_service:
 ssh_service:
   enabled: yes
   listen_addr: 0.0.0.0:3022
-  port_forwarding: {{ ssh_node.port_forwarding }}
+  port_forwarding: {{ ssh_node.port_forwarding | default("false") }}
   {% if ssh_node.labels %}
   labels: 
     {{ ssh_node.labels | to_nice_yaml(width=1050, indent=1) | indent(4, false) }}
@@ -103,7 +103,7 @@ ssh_service:
     command_buffer_size: 8
     disk_buffer_size: 128
     network_buffer_size: 8
-    cgroup_path: {{ ssh_node.cgroup_path }}
+    cgroup_path: {{ ssh_service.cgroup_path | default("/cgroup2") }}
   pam:
     enabled: yes
     service_name: "teleport"
@@ -112,7 +112,7 @@ ssh_service:
 kubernetes_service:
   enabled: yes
   listen_addr: 0.0.0.0:3027
-  kubeconfig_file: {{ k8s_node.kubeconfig_file }}
+  kubeconfig_file: {{ k8s_node.kubeconfig_file | default("/var/lib/teleport/kubeconfig") }}
   {% if k8s_node.labels %}
   labels:
     {{ k8s_node.labels | to_nice_yaml(width=1050, indent=1) | indent(4, false) }}
