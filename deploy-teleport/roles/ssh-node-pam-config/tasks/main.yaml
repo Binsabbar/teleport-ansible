@@ -1,0 +1,32 @@
+- name: Create Teleport PAM file
+  copy:
+    src: teleport_pam
+    dest: /etc/pam.d/teleport
+    mode: 0744
+    owner: root
+    group: root
+  become: true
+
+- name: Create directory /etc/pam-exec.d/
+  file:
+    path: /etc/pam-exec.d/
+    state: dirctory
+    mode: 0744
+    owner: root
+    group: root
+  become: true
+
+- name: Create Teleport PAM file
+  copy:
+    src: teleport_acct
+    dest: /etc/pam-exec.d/teleport_acct
+    mode: 0744
+    owner: root
+    group: root
+  become: true
+  
+- name: Make teleport_acct executable
+  file:
+    path:  /etc/pam-exec.d/teleport_acct
+    mode: 0555
+    state: file
