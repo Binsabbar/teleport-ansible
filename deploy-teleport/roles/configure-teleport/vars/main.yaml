@@ -58,6 +58,7 @@ ssh_node:
       period: 1m0s
   cgroup_path: "/cgroup2"
   labels: {}
+  enhanced_recording: false
 
 k8s_node:
   kubeconfig_file: "/var/lib/teleport/kubeconfig"
