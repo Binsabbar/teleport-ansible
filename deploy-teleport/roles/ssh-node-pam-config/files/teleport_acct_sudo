@@ -1,0 +1,17 @@
+# NOT RECOMMENDED USE AT YOUR OWN RISK !
+
+#!/bin/sh
+COMMENT="User \${TELEPORT_USERNAME} with roles \${TELEPORT_ROLES} created by Teleport."
+id -u "\${TELEPORT_LOGIN}" &>/dev/null  || /sbin/useradd -s /bin/bash -m -c "\${COMMENT}" "\${TELEPORT_LOGIN}" 2> /tmp/pam.error
+
+# Add group to user
+printenv TELEPORT_ROLES | grep -Eo " sudo "
+if [[ $? == 0 ]]; then
+  echo "I am sudo"
+  echo "\${TELEPORT_LOGIN} ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/101-${TELEPORT_LOGIN}
+else
+  rm -fr /etc/sudoers.d/101-${TELEPORT_LOGIN}
+fi
+
+exit 0
+EOF
