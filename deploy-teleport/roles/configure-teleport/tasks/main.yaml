@@ -1,0 +1,58 @@
+- name: Make sure node_type is allowed
+  fail:
+    msg: >-
+      node_type "{{ node_type }}" is not allowed.
+      Please choose a target environment in {{ node_type | join(', ') }}
+  when: not node_type in _allowed_node_type
+  vars:
+    _allowed_node_type:
+      - main_proxy
+      - main_auth
+      - leaf
+      - ssh
+      - k8s
+      - application
+  run_once: true
+
+- name: Create AWS dir
+  file:
+    path: ~/.aws
+    owner: teleport
+    group: teleport
+    state: directory
+    mode: '0750'
+  become: true
+  become_user: teleport
+  when: node_type in ['main_auth', 'leaf']
+
+- name: Copy AWS Creds
+  template:
+    src: "credentials.j2"
+    dest: "~/.aws/credentials"
+    owner: teleport
+    grouo: teleport
+    mode: 0600
+  become: true
+  become_user: teleport
+  when: node_type in ['main_auth', 'leaf']
+
+- name: Copy teleport to /etc/teleport.yaml
+  template:
+    src: "teleport.yaml.j2"
+    dest: "/etc/teleport.yaml"
+    owner: teleport
+    grouo: teleport
+    mode: 0600
+  become: true
+  become_user: teleport
+
+- name: Copy trusted_cluster Config
+  template:
+    src: "trusted_cluster.yaml.j2"
+    dest: "{{ data_dir }}/trusted_cluster.yaml"
+    owner: teleport
+    grouo: teleport
+    mode: 0600
+  become: true
+  become_user: teleport
+  when: node_type in ['leaf']
