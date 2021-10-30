@@ -45,19 +45,19 @@ teleport:
 proxy_service:
   enabled: yes
   web_listen_addr: 0.0.0.0:3080
-  {% if proxy_node.web_pub_addr %}
+  {% if proxy_node.web_pub_addr is defined and proxy_node.web_pub_addr %}
   public_addr: {{ proxy_node.web_pub_addr }}:3080
   {% endif %}
   listen_addr: 0.0.0.0:3023
-  {% if proxy_node.ssh_pub_addr %}
+  {% if proxy_node.ssh_pub_addr is defined and proxy_node.ssh_pub_addr %}
   ssh_public_addr: {{ proxy_node.ssh_pub_addr }}:3023
   {% endif %}
   tunnel_listen_addr: 0.0.0.0:3024
-  {% if proxy_node.tun_pub_addr %}
+  {% if proxy_node.tun_pub_addr is defined and proxy_node.tun_pub_addr %}
   tunnel_public_addr: {{ proxy_node.tun_pub_addr }}:3024
   {% endif %}
   kube_listen_addr: 0.0.0.0:3026
-  {% if proxy_node.acme.enabled %}
+  {% if proxy_node.acme.enabled is defined and proxy_node.acme.enabled%}
   acme:
     enabled: {{ proxy_node.acme.enabled }}
     email: {{ proxy_node.acme.email }}
@@ -81,7 +81,7 @@ auth_service:
   keep_alive_count_max: {{ auth_node.keep_alive_count_max | default("3") }}
   client_idle_timeout_message: "Your connection disconnected due to inactivity"
   message_of_the_day: "Your activity is recorded and kept for auditing"
-  {% if auth_node.license_file %}
+  {% if auth_node.license_file is defined and auth_node.license_file%}
   license_file: {{ auth_node.license_file }}
   {% endif %}
 {% endif %}
@@ -90,11 +90,11 @@ ssh_service:
   enabled: yes
   listen_addr: 0.0.0.0:3022
   port_forwarding: {{ ssh_node.port_forwarding | default("false") }}
-  {% if ssh_node.labels %}
+  {% if ssh_node.labels is defined and ssh_node.labels %}
   labels: 
     {{ ssh_node.labels | to_nice_yaml(width=1050, indent=1) | indent(4, false) }}
   {% endif %}
-  {% if ssh_node.commands %}
+  {% if ssh_node.commands is defined and ssh_node.commands %}
   commands:
     {{ ssh_node.commands | list | to_nice_yaml(width=1050, indent=1) | indent(4, false) }}
   {% endif %}
@@ -113,7 +113,7 @@ kubernetes_service:
   enabled: yes
   listen_addr: 0.0.0.0:3027
   kubeconfig_file: {{ k8s_node.kubeconfig_file | default("/var/lib/teleport/kubeconfig") }}
-  {% if k8s_node.labels %}
+  {% if k8s_node.labels is defined and k8s_node.labels%}
   labels:
     {{ k8s_node.labels | to_nice_yaml(width=1050, indent=1) | indent(4, false) }}
   {% endif %}
