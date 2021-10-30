@@ -2,6 +2,7 @@
 - hosts: main_proxy
   vars:
     node_type: main_proxy
+    auth_nodes_addr: ["ADDR_1:3025", "ADDR_2:3025"]
     ssh_node:
       labels:
         - access: admin
