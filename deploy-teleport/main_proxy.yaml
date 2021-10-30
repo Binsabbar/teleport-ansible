@@ -1,0 +1,20 @@
+---
+- hosts: main_proxy
+  vars:
+    node_type: main_proxy
+    ssh_node:
+      labels:
+        - access: admin
+        - type: teleport
+        - env: production
+    proxy_node:
+      web_pub_addr: ""
+      ssh_pub_addr: ""
+      tun_pub_addr: ""
+      acme:
+        enabled: false
+        email: ""
+  roles:
+    - teleport-install
+    - configure-teleport
+    - ssh-node-pam-config
