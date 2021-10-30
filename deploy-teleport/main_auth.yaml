@@ -1,0 +1,21 @@
+---
+- hosts: main_auth
+  vars:
+    node_type: main_auth
+    ssh_node:   
+      labels:
+        - type: teleport-auth
+        - env: production
+    auth_node:
+      cluster_name: "main"
+      s3:
+        url: ""
+        access_key: ""
+        access_secret: ""
+      copy_license_from_local_file:
+        enable: true
+        local_path: "/home/etc/etc/etc"
+  roles:
+    - teleport-install
+    - configure-teleport
+    - ssh-node-pam-config
