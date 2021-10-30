@@ -56,3 +56,14 @@
   become: true
   become_user: teleport
   when: node_type in ['leaf']
+ 
+- name: Restart service teleport
+  service:
+    name: teleport
+    state: restart
+  become: true
+  
+- name: apply leaf configuration
+  command: "tctl create {{ data_dir }}/trusted_cluster.yaml"
+  become: true
+  become_user: teleport
