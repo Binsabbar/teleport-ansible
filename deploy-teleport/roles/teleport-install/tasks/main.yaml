@@ -1,0 +1,48 @@
+- name: Install teleport public key
+  get_curl: 
+   url: https://deb.releases.teleport.dev/teleport-pubkey.asc
+   dest: /tmp/
+
+- name: Add Pub key
+  command: apt-key add /tmp/teleport-pubkey.asc
+  register: apt_key
+  changed_when: apt_key.rc != 0 
+  become: yes
+
+- name: Add repo to APT
+  apt_repository:
+    repo: deb https://deb.releases.teleport.dev/ stable main
+    state: present
+  become: yes
+
+- name: Install teleport
+  apt: 
+    update_cache: true
+    name: teleport
+    state: present
+  become: yes
+
+- name: Create teleport dirs
+  file:
+    path: {{ item }}
+    owner: teleport
+    group: teleport
+    state: directory
+    mode: '0750'
+  loop:
+    - "/var/log/teleport"
+    - "/var/lib/teleport"
+
+- name: Modify hard/soft nofile limits for teleport
+  community.general.pam_limits:
+    domain: 'teleport'
+    limit_type: '-'
+    limit_item: nofile
+    value: 1065536
+
+- name: Modify hard nproc limits for teleport
+  community.general.pam_limits:
+    domain: 'teleport'
+    limit_type: '-'
+    limit_item: nproc
+    value: 1065536
