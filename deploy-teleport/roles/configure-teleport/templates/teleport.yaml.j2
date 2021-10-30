@@ -1,15 +1,18 @@
+#jinja2:lstrip_blocks: True
+---
+
 teleport:
   data_dir: {{ data_dir }}
   pid_file: /var/run/teleport.pid
   log:
-      output: {{ log.output }}
-      severity: {{ log.severity }}
-      format:
-        output: {{ log.format }}
+    output: {{ log.output }}
+    severity: {{ log.severity }}
+    format:
+      output: {{ log.format }}
   {% if node_type in ["main_proxy", "main_auth", "leaf"] %}
   connection_limits:
-      max_connections: {{ max_connections }}
-      max_users: {{ max_users }}
+    max_connections: {{ max_connections }}
+    max_users: {{ max_users }}
   {% endif %}
   {% if node_type in ["main_proxy", "leaf"] %}
   cache:
@@ -19,102 +22,107 @@ teleport:
   {% endif %}
   {% if node_type in ["main_auth", "leaf"] %}
   storage:
-        type: dir
-        audit_events_uri: ['{{ audit_event_path }}']
-        audit_sessions_uri: "{{ auth_node.s3.url | mandatory }}"    
+    type: dir
+    audit_events_uri: ['{{ audit_event_path }}']
+    audit_sessions_uri: "{{ auth_node.s3.url | mandatory }}"    
   {% endif %}
 
-  {% if node_type == "leaf" %}
+  {% if node_type in ["main_auth", "leaf"] %}
   auth_servers: ["localhost:3025"]
   {% endif %}
   
   {% if node_type in ["main_proxy", "ssh", "k8s", "application"] %}
   auth_servers: 
-    {{ auth_nodes_addr | from_yaml | mandatory }}
+    {{ auth_nodes_addr | list | to_nice_yaml(width=1050, indent=1) | indent(4, false) }}
   {% endif %}
 
-  {% if node_type in ['ssh', 'k8s', 'application']%}
+  {% if node_type in ['ssh', 'k8s', 'application'] %}
   ca_pin: {{ ca_pin | mandatory}}
   auth_token: {{ auth_token | mandatory }}
   {% endif %}
   
 {% if node_type in ["main_proxy", "leaf"] %}
 proxy_service:
-    enabled: yes
-    web_listen_addr: 0.0.0.0:3080
-    {% if proxy_node.web_pub_addr %}
-    public_addr: {{ proxy_node.web_pub_addr }}:3080
-    {% endif %}
-    listen_addr: 0.0.0.0:3023
-    {% if proxy_node.ssh_pub_addr %}
-    ssh_public_addr: {{ proxy_node.ssh_pub_addr }}:3023
-    {% endif %}
-    tunnel_listen_addr: 0.0.0.0:3024
-    {% if proxy_node.tun_pub_addr %}
-    tunnel_public_addr: {{ proxy_node.tun_pub_addr }}:3024
-    {% endif %}
-    kube_listen_addr: 0.0.0.0:3026
-    {% if proxy_node.acme.enabled %}
-    acme:
-     enabled: {{ proxy_node.acme.enabled }}
-     email: {{ proxy_node.acme.email }}
-    {% endif %}
+  enabled: yes
+  web_listen_addr: 0.0.0.0:3080
+  {% if proxy_node.web_pub_addr %}
+  public_addr: {{ proxy_node.web_pub_addr }}:3080
+  {% endif %}
+  listen_addr: 0.0.0.0:3023
+  {% if proxy_node.ssh_pub_addr %}
+  ssh_public_addr: {{ proxy_node.ssh_pub_addr }}:3023
+  {% endif %}
+  tunnel_listen_addr: 0.0.0.0:3024
+  {% if proxy_node.tun_pub_addr %}
+  tunnel_public_addr: {{ proxy_node.tun_pub_addr }}:3024
+  {% endif %}
+  kube_listen_addr: 0.0.0.0:3026
+  {% if proxy_node.acme.enabled %}
+  acme:
+    enabled: {{ proxy_node.acme.enabled }}
+    email: {{ proxy_node.acme.email }}
+  {% endif %}
 {% endif %}
 
 {% if node_type in ["main_auth", "leaf"] %}
 auth_service:
-    enabled: yes
-    cluster_name: {{ auth_node.cluster_name | mandatory }}
-    authentication:
-        type: local
-        local_auth: true
-        second_factor: otp
-        locking_mode: best_effort
-    listen_addr: 0.0.0.0:3025
-    session_recording: {{ auth_node.session_recording }}
-    client_idle_timeout: {{ auth_node.client_idle_timeout }}
-    disconnect_expired_cert: {{ auth_node.disconnect_expired_cert }}
-    keep_alive_interval: {{ auth_node.keep_alive_interval }}
-    keep_alive_count_max: {{ auth_node.keep_alive_count_max }}
-    client_idle_timeout_message: "Your connection disconnected due to inactivity"
-    message_of_the_day: "Your activity is recorded and kept for auditing"
-    {% if auth_node.license_file %}
-    license_file: {{ auth_node.license_file }}
-    {% endif %}
+  enabled: yes
+  cluster_name: {{ auth_node.cluster_name | mandatory }}
+  authentication:
+    type: local
+    local_auth: true
+    second_factor: otp
+    locking_mode: best_effort
+  listen_addr: 0.0.0.0:3025
+  session_recording: {{ auth_node.session_recording }}
+  client_idle_timeout: {{ auth_node.client_idle_timeout }}
+  disconnect_expired_cert: {{ auth_node.disconnect_expired_cert }}
+  keep_alive_interval: {{ auth_node.keep_alive_interval }}
+  keep_alive_count_max: {{ auth_node.keep_alive_count_max }}
+  client_idle_timeout_message: "Your connection disconnected due to inactivity"
+  message_of_the_day: "Your activity is recorded and kept for auditing"
+  {% if auth_node.license_file %}
+  license_file: {{ auth_node.license_file }}
+  {% endif %}
 {% endif %}
 
 ssh_service:
+  enabled: yes
+  listen_addr: 0.0.0.0:3022
+  port_forwarding: {{ ssh_node.port_forwarding }}
+  {% if ssh_node.labels %}
+  labels: 
+    {{ ssh_node.labels | to_nice_yaml(width=1050, indent=1) | indent(4, false) }}
+  {% endif %}
+  {% if ssh_node.commands %}
+  commands:
+    {{ ssh_node.commands | list | to_nice_yaml(width=1050, indent=1) | indent(4, false) }}
+  {% endif %}
+  enhanced_recording:
+    enabled: true
+    command_buffer_size: 8
+    disk_buffer_size: 128
+    network_buffer_size: 8
+    cgroup_path: {{ ssh_node.cgroup_path }}
+  pam:
     enabled: yes
-    listen_addr: 0.0.0.0:3022
-    port_forwarding: {{ ssh_node.port_forwarding }}
-    labels: 
-      {{ ssh_node.labels | from_yaml }}
-    commands:
-      {{ ssh_node.commands | from_yaml }}
-    enhanced_recording:
-      enabled: true
-      command_buffer_size: 8
-      disk_buffer_size: 128
-      network_buffer_size: 8
-      cgroup_path: {{ ssh_service.cgroup_path }}
-    pam:
-      enabled: yes
-      service_name: "teleport"
+    service_name: "teleport"
 
 {% if node_type == "k8s" %}
 kubernetes_service:
   enabled: yes
   listen_addr: 0.0.0.0:3027
   kubeconfig_file: {{ k8s_node.kubeconfig_file }}
+  {% if k8s_node.labels %}
   labels:
-    {{ k8s_node.labels | from_yaml }}
-
+    {{ k8s_node.labels | to_nice_yaml(width=1050, indent=1) | indent(4, false) }}
+  {% endif %}
 {% endif %}
 
 {% if node_type == "application" %}
 app_service:
-    enabled: yes
-    debug_app: false
-    apps:
-      {{ application_node.apps | from_yaml }}
+  enabled: yes
+  debug_app: false
+  apps:
+    {{ application_node.apps | to_nice_yaml(width=1050, indent=1) | indent(4, false) | mandatory }}
 {% endif %}
