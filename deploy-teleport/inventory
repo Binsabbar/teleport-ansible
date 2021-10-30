@@ -1,0 +1,17 @@
+# It is the main root cluster proxy node - it has proxy + ssh svcs enabled
+[main_proxy]
+
+# It is the main root cluster auth node - it has auth + ssh svc enabled and does not have public IP
+[main_auth]
+
+# It is the leaf cluster. It has proxy, auth, and ssh svcs enabled. Usually leaf is behind FW
+[leaf]
+
+# hosts to enable ssh svcs only
+[ssh_only_node]
+
+# hosts to enable ssh and k8s svcs only (Proxy to K8s cluster)
+[k8s_ssh_node]
+
+# hosts to enable ssh and application svcs only (Proxy to internal application)
+[application_ssh_node]
