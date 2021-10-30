@@ -1,0 +1,30 @@
+---
+- hosts: leaf
+  vars:
+    node_type: leaf
+    auth_token: "add_token"
+    trusted_cluster:
+      root_cluster_name: "main"
+      tunnel_addr: "main.address"
+      proxy_addr: "main.address"
+      role_map: []
+    ssh_node:
+      labels:
+        - type: teleport-leaf
+        - env: production
+    proxy_node:
+      acme:
+        enabled: false
+    auth_node:
+      cluster_name: "leaf-production"
+      s3:
+        url: ""
+        access_key: ""
+        access_secret: ""
+      copy_license_from_local_file:
+        enable: true
+        local_path: "/home/etc/etc/etc"
+  roles:
+    - teleport-install
+    - configure-teleport
+    - ssh-node-pam-config
