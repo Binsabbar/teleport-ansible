@@ -7,7 +7,7 @@
 - name: Add Teleport Key
   apt_key:
     url: https://deb.releases.teleport.dev/teleport-pubkey.asc
-    state: presen
+    state: present
   become: yes
     
 - name: Add repo to APT
@@ -25,7 +25,7 @@
 
 - name: Create teleport dirs
   file:
-    path: {{ item }}
+    path: "{{ item }}"
     owner: teleport
     group: teleport
     state: directory
