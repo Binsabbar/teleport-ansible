@@ -1,0 +1,65 @@
+# Defaults for teleport
+data_dir: "/var/lib/teleport"
+max_connections: 10000
+max_users: 350
+log_output: "/var/log/teleport/teleport.log"
+cache_ttl: 20h
+
+
+# General Node Settings (Required)
+node_type: "" # main_proxy, main_auth, leaf, ssh, k8s, application
+auth_nodes_addr: ["ADDR_1:3025", "ADDR_2:3025"]
+
+# Only for SSH, K8s and Application nodes
+auth_token: ""
+ca_pin: ""
+
+# Trusted cluster Config (Required)
+trusted_cluster:
+  root_cluster_name: ""
+  tunnel_addr: ""
+  proxy_addr: ""
+  role_map: []
+
+# Node Specific Configs (Optional)
+proxy_node:
+  web_pub_addr: "" # leave empty if not needed
+  ssh_pub_addr: "" # leave empty if not needed
+  tun_pub_addr: "" # leave empty if not needed
+  acme:
+    enabled: false
+    email: ""
+
+auth_node:
+  cluster_name: ""
+  s3:
+    url: ""
+    access_key: ""
+    access_secret: ""
+  client_idle_timeout: 1h
+  disconnect_expired_cert: no
+  keep_alive_interval: 5m
+  keep_alive_count_max: 3
+  license_file: /var/lib/teleport/license.pem
+  copy_license_from_local_file:
+    enable: true
+    local_path: ""
+
+ssh_node:
+  port_forwarding: false
+  labels: {}
+  commands: {}
+
+k8s_node:
+  kubeconfig_file: "/var/lib/teleport/kubeconfig"
+  copy_kubeconfig_from_local_file:
+    enable: true
+    local_path: ""
+  labels: {}
+
+application_node:
+  apps:
+    - name: test
+      uri: http://test.com
+      public_addr: "test.teleport.example.com"
+      labels: {}
