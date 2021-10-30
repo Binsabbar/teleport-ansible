@@ -1,14 +1,9 @@
-- name: Install teleport public key
-  get_curl: 
-   url: https://deb.releases.teleport.dev/teleport-pubkey.asc
-   dest: /tmp/
-
-- name: Add Pub key
-  command: apt-key add /tmp/teleport-pubkey.asc
-  register: apt_key
-  changed_when: apt_key.rc != 0 
+- name: Add Teleport Key
+  apt_key:
+    url: https://deb.releases.teleport.dev/teleport-pubkey.asc
+    state: presen
   become: yes
-
+    
 - name: Add repo to APT
   apt_repository:
     repo: deb https://deb.releases.teleport.dev/ stable main
@@ -32,6 +27,7 @@
   loop:
     - "/var/log/teleport"
     - "/var/lib/teleport"
+   become: yes
 
 - name: Modify hard/soft nofile limits for teleport
   community.general.pam_limits:
