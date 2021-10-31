@@ -3,6 +3,7 @@
     name: teleport
     comment: Teleport User
     uid: 1010
+  become: true
 
 - name: Install teleport
   apt: 
