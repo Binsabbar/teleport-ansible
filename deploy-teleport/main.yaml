@@ -1,5 +1,5 @@
 ---
-- hosts: main_auth
+- hosts: teleport-node
   roles:
     - teleport-install
     - configure-teleport
