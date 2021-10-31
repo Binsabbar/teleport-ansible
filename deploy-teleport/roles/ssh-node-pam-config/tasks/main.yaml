@@ -30,3 +30,4 @@
     path:  /etc/pam-exec.d/teleport_acct
     mode: 0555
     state: file
+  become: true
