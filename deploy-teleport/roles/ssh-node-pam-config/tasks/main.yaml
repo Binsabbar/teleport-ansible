@@ -10,7 +10,7 @@
 - name: Create directory /etc/pam-exec.d/
   file:
     path: /etc/pam-exec.d/
-    state: dirctory
+    state: directory
     mode: 0744
     owner: root
     group: root
