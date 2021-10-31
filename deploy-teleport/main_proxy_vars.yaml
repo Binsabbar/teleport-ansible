@@ -1,0 +1,13 @@
+node_type: main_proxy
+auth_nodes_addr: ["ADDR_1:3025", "ADDR_2:3025"]
+ssh_node:
+  labels:
+    type: teleport
+    env: production
+proxy_node:
+  web_pub_addr: ""
+  ssh_pub_addr: ""
+  tun_pub_addr: ""
+  acme:
+    enabled: false
+    email: ""
