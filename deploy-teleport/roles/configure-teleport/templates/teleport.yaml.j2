@@ -33,7 +33,7 @@ teleport:
   
   {% if node_type in ["main_proxy", "ssh", "k8s", "application"] %}
   auth_servers: 
-    {{ auth_nodes_addr | list | to_nice_yaml(width=1050, indent=1) | indent(4, false) }}
+    {{ auth_nodes_addr | list | to_nice_yaml(width=1050, indent=1, default_style='\"') | indent(4, false) }}
   {% endif %}
 
   {% if node_type in ['ssh', 'k8s', 'application'] %}
@@ -44,19 +44,19 @@ teleport:
 {% if node_type in ["main_proxy", "leaf"] %}
 proxy_service:
   enabled: yes
-  web_listen_addr: 0.0.0.0:3080
+  web_listen_addr: "0.0.0.0:3080"
   {% if proxy_node.web_pub_addr is defined and proxy_node.web_pub_addr %}
-  public_addr: {{ proxy_node.web_pub_addr }}:3080
+  public_addr: "{{ proxy_node.web_pub_addr }}:3080"
   {% endif %}
-  listen_addr: 0.0.0.0:3023
+  listen_addr: "0.0.0.0:3023"
   {% if proxy_node.ssh_pub_addr is defined and proxy_node.ssh_pub_addr %}
-  ssh_public_addr: {{ proxy_node.ssh_pub_addr }}:3023
+  ssh_public_addr: "{{ proxy_node.ssh_pub_addr }}:3023"
   {% endif %}
-  tunnel_listen_addr: 0.0.0.0:3024
+  tunnel_listen_addr: "0.0.0.0:3024"
   {% if proxy_node.tun_pub_addr is defined and proxy_node.tun_pub_addr %}
-  tunnel_public_addr: {{ proxy_node.tun_pub_addr }}:3024
+  tunnel_public_addr: "{{ proxy_node.tun_pub_addr }}:3024"
   {% endif %}
-  kube_listen_addr: 0.0.0.0:3026
+  kube_listen_addr: "0.0.0.0:3026"
   {% if proxy_node.acme.enabled is defined and proxy_node.acme.enabled%}
   acme:
     enabled: {{ proxy_node.acme.enabled }}
@@ -73,7 +73,7 @@ auth_service:
     local_auth: true
     second_factor: otp
     locking_mode: best_effort
-  listen_addr: 0.0.0.0:3025
+  listen_addr: "0.0.0.0:3025"
   session_recording: {{ auth_node.session_recording | default("proxy-sync") }}
   client_idle_timeout: {{ auth_node.client_idle_timeout | default("1h") }}
   disconnect_expired_cert: {{ auth_node.disconnect_expired_cert | default("no") }}
@@ -88,7 +88,7 @@ auth_service:
 
 ssh_service:
   enabled: yes
-  listen_addr: 0.0.0.0:3022
+  listen_addr: "0.0.0.0:3022"
   port_forwarding: {{ ssh_node.port_forwarding | default("false") }}
   {% if ssh_node.labels is defined and ssh_node.labels %}
   labels: 
@@ -113,7 +113,7 @@ ssh_service:
 {% if node_type == "k8s" %}
 kubernetes_service:
   enabled: yes
-  listen_addr: 0.0.0.0:3027
+  listen_addr: "0.0.0.0:3027"
   kubeconfig_file: {{ k8s_node.kubeconfig_file | default("/var/lib/teleport/kubeconfig") }}
   {% if k8s_node.labels is defined and k8s_node.labels%}
   labels:
