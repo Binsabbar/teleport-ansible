@@ -1,0 +1,6 @@
+---
+- hosts: main_auth
+  roles:
+    - teleport-install
+    - configure-teleport
+    - ssh-node-pam-config
