@@ -1,8 +1,8 @@
 node_type: main_auth
 ssh_node:   
   labels:
-    - type: teleport-auth
-    - env: production
+    type: teleport-auth
+    env: production
 auth_node:
   cluster_name: "main"
   s3:
