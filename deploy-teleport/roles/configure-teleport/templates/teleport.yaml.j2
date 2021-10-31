@@ -62,6 +62,9 @@ proxy_service:
     enabled: {{ proxy_node.acme.enabled }}
     email: {{ proxy_node.acme.email }}
   {% endif %}
+{% else %}
+proxy_service:
+  enabled: false
 {% endif %}
 
 {% if node_type in ["main_auth", "leaf"] %}
@@ -84,6 +87,9 @@ auth_service:
   {% if auth_node.license_file is defined and auth_node.license_file%}
   license_file: {{ auth_node.license_file }}
   {% endif %}
+{% else %}
+auth_service:
+  enabled: false
 {% endif %}
 
 ssh_service:
@@ -119,6 +125,9 @@ kubernetes_service:
   labels:
     {{ k8s_node.labels | to_nice_yaml(width=1050, indent=1) | indent(4, false) }}
   {% endif %}
+{% else %}
+kubernetes_service:
+  enabled: false
 {% endif %}
 
 {% if node_type == "application" %}
@@ -127,4 +136,7 @@ app_service:
   debug_app: false
   apps:
     {{ application_node.apps | to_nice_yaml(width=1050, indent=1) | indent(4, false) | mandatory }}
+{% else %}
+app_service:
+  enabled: false
 {% endif %}
