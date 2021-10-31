@@ -1,0 +1,8 @@
+node_type: ssh
+auth_token: "add_token"
+ca_pin: "add_ca_pin"
+auth_nodes_addr: ["ADDR_1:3025", "ADDR_2:3025"]
+ssh_node:
+  labels:
+    type: ["teleport-ssh-node", "database"]
+    env: production
