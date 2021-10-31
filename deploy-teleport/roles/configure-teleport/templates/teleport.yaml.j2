@@ -36,7 +36,7 @@ teleport:
     {{ auth_nodes_addr | list | to_nice_yaml(width=1050, indent=1, default_style='\"') | indent(4, false) }}
   {% endif %}
 
-  {% if node_type in ['ssh', 'k8s', 'application'] %}
+  {% if node_type in ["main_proxy", "ssh", "k8s", "application"] %}
   ca_pin: {{ ca_pin | mandatory}}
   auth_token: {{ auth_token | mandatory }}
   {% endif %}
