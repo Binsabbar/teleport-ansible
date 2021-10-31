@@ -5,6 +5,7 @@ metadata:
 spec:
   enabled: true
   token: {{ auth_token | mandatory }}
-  tunnel_addr: {{ trusted_cluster.tunnel_addr }}:3024
-  web_proxy_addr: {{ trusted_cluster.proxy_addr }}:443
-  role_map: {{ trusted_cluster.role_map | from_yaml }}
+  tunnel_addr: {{ trusted_cluster.tunnel_addr | mandatory }}:3024
+  web_proxy_addr: {{ trusted_cluster.proxy_addr | mandatory }}:443
+  role_map:
+    {{ trusted_cluster.role_map | to_nice_yaml(width=1050, indent=1) | indent(4, false) | mandatory }}
