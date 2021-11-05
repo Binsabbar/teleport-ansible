@@ -13,8 +13,8 @@
 - name: Create teleport dirs
   file:
     path: "{{ item }}"
-    owner: teleport
-    group: teleport
+    owner: root
+    group: root
     state: directory
     mode: '0750'
   loop:
@@ -22,18 +22,15 @@
     - "/var/lib/teleport"
   become: yes
 
-- name: Modify hard/soft nofile limits for teleport
-  community.general.pam_limits:
-    domain: 'teleport'
-    limit_type: '-'
-    limit_item: nofile
-    value: 1065536
-  become: yes
-   
-- name: Modify hard nproc limits for teleport
-  community.general.pam_limits:
-    domain: 'teleport'
-    limit_type: '-'
-    limit_item: nproc
-    value: 1065536
-  become: yes
+- name: Modify LimitNOFILE for teleport
+  lineinfile:
+    path: "/lib/systemd/system/teleport.service"
+    regexp: '^LimitNOFILE=.*$'
+    line: "LimitNOFILE=65536"
+
+- name: reload the service
+  systemd:
+    daemon_reload: true
+    state: started
+    name: teleport
+  become: true
