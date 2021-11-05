@@ -1,5 +1,6 @@
 #!/bin/sh
 COMMENT="User \${TELEPORT_USERNAME} with roles \${TELEPORT_ROLES} created by Teleport."
+
+#TODO set expiration date
 id -u "\${TELEPORT_LOGIN}" &>/dev/null  || /sbin/useradd -s /bin/bash -m -c "\${COMMENT}" "\${TELEPORT_LOGIN}" 2> /tmp/pam.error
 exit 0
-EOF
