@@ -14,22 +14,12 @@
       - application
   run_once: true
 
-- name: Create AWS dir
-  file:
-    path: /home/teleport/.aws
-    owner: teleport
-    group: teleport
-    state: directory
-    mode: '0766'
-  become: true
-  when: node_type in ['main_auth', 'leaf']
-
-- name: Copy AWS Creds
+- name: Set AWS Creds as ENV
   template:
-    src: "credentials.j2"
-    dest: "/home/teleport/.aws/credentials"
-    owner: teleport
-    group: teleport
+    src: "teleport-env.j2"
+    dest: "/etc/default/teleport"
+    owner: root
+    group: root
     mode: 0600
   become: true
   when: node_type in ['main_auth', 'leaf']

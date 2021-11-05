@@ -43,7 +43,7 @@ teleport:
   
 {% if node_type in ["main_proxy", "leaf"] %}
 proxy_service:
-  enabled: yes
+  enabled: true
   web_listen_addr: "0.0.0.0:3080"
   {% if proxy_node.web_pub_addr is defined and proxy_node.web_pub_addr %}
   public_addr: "{{ proxy_node.web_pub_addr }}:3080"
@@ -69,7 +69,7 @@ proxy_service:
 
 {% if node_type in ["main_auth", "leaf"] %}
 auth_service:
-  enabled: yes
+  enabled: true
   cluster_name: {{ auth_node.cluster_name | mandatory }}
   authentication:
     type: local
@@ -93,7 +93,7 @@ auth_service:
 {% endif %}
 
 ssh_service:
-  enabled: yes
+  enabled: true
   listen_addr: "0.0.0.0:3022"
   port_forwarding: {{ ssh_node.port_forwarding | default("false") }}
   {% if ssh_node.labels is defined and ssh_node.labels %}
@@ -113,12 +113,12 @@ ssh_service:
     cgroup_path: {{ ssh_service.cgroup_path | default("/cgroup2") }}
   {% endif %}
   pam:
-    enabled: yes
+    enabled: true
     service_name: "teleport"
 
 {% if node_type == "k8s" %}
 kubernetes_service:
-  enabled: yes
+  enabled: true
   listen_addr: "0.0.0.0:3027"
   kubeconfig_file: {{ k8s_node.kubeconfig_file | default("/var/lib/teleport/kubeconfig") }}
   {% if k8s_node.labels is defined and k8s_node.labels%}
@@ -132,7 +132,7 @@ kubernetes_service:
 
 {% if node_type == "application" %}
 app_service:
-  enabled: yes
+  enabled: true
   debug_app: false
   apps:
     {{ application_node.apps | to_nice_yaml(width=1050, indent=1) | indent(4, false) | mandatory }}
