@@ -8,7 +8,7 @@
 - name: Install teleport
   apt: 
     deb: "https://get.gravitational.com/teleport_{{ teleport_version | default('7.3.2') }}_amd64.deb"
-  become: yes
+  become: true
 
 - name: Create teleport dirs
   file:
@@ -20,7 +20,7 @@
   loop:
     - "/var/log/teleport"
     - "/var/lib/teleport"
-  become: yes
+  become: true
 
 - name: Modify LimitNOFILE for teleport
   lineinfile:
