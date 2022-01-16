@@ -27,6 +27,7 @@
     path: "/lib/systemd/system/teleport.service"
     regexp: '^LimitNOFILE=.*$'
     line: "LimitNOFILE=65536"
+  become: true
 
 - name: reload the service
   systemd:
