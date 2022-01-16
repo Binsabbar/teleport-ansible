@@ -1,3 +1,0 @@
-# Defaults for teleport
-data_dir: "/var/lib/teleport"
-backup_dir: "/var/lib/teleport-backup"
