@@ -16,7 +16,7 @@
 - name: "Copy {{ data_dir }} to {{ backup_dir }}"
   ansible.builtin.copy:
     remote_src: true
-    src: {{ data_dir }}
+    src: "{{ data_dir }}"
     dest: "{{ backup_dir }}/data-dir-backup"
     owner: root
     group: root
