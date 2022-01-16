@@ -24,6 +24,13 @@
   become: true
   when: node_type in ['main_auth', 'leaf']
 
+- name: Modify EnvironmentFile param for teleport service
+  lineinfile:
+    path: "/lib/systemd/system/teleport.service"
+    insertafter: '^[Service].*$'
+    line: "EnvironmentFile=-/etc/default/teleport"
+  become: true
+
 - name: Copy teleport to /etc/teleport.yaml
   template:
     src: "teleport.yaml.j2"
@@ -44,9 +51,10 @@
   when: node_type in ['leaf']
  
 - name: Restart service teleport
-  service:
-    name: teleport
+  systemd:
+    daemon_reload: true
     state: restarted
+    name: teleport
   become: true
   
 - name: apply leaf configuration
