@@ -8,9 +8,8 @@
   become: true
 
 - name: Dump configuration into a file
-  command: "tctl get all --with-secrets > state.yaml"
-  args:
-    chdir: "{{ backup_dir }}"
+  shell: "tctl get all --with-secrets > state.yaml"
+  chdir: "{{ backup_dir }}"
   become: true
 
 - name: "Copy {{ data_dir }} to {{ backup_dir }}"
