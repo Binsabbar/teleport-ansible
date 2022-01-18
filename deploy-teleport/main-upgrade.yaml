@@ -1,5 +1,0 @@
----
-- hosts: teleport-node
-  roles:
-    - local-backup
-    - upgrade
