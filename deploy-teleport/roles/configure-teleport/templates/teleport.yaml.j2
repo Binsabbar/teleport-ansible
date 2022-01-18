@@ -41,7 +41,7 @@ teleport:
   auth_token: {{ auth_token | mandatory }}
   {% endif %}
   
-  {% if auto_generated_ca_pin and auto_generated_token %}
+  {% if auto_generated_ca_pin is defined and auto_generated_token is defined %}
   ca_pin: {{ auto_generated_ca_pin }}
   auth_token: {{ auto_generated_token }}
   {% endif %}
