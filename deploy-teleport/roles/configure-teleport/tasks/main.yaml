@@ -22,7 +22,7 @@
     group: teleport
     mode: 0600
   become: true
-  when: auth_node.copy_license_from_local_file is defined and auth_node.copy_license_from_local_file.enable
+  when: node_type in ['main_auth', 'leaf'] and auth_node.copy_license_from_local_file is defined and auth_node.copy_license_from_local_file.enable
 
 - name: Set AWS Creds as ENV in /etc/default/teleport
   template:
