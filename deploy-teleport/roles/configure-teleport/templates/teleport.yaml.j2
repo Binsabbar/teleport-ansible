@@ -28,7 +28,7 @@ teleport:
   {% endif %}
 
   {% if node_type in ["main_auth", "leaf"] %}
-  auth_servers: ["localhost:3025"]
+  auth_servers: [{{ auto_generated_auth_server | default("localhost:3025") }}]
   {% endif %}
   
   {% if node_type in ["main_proxy", "ssh", "k8s", "application"] %}
@@ -39,6 +39,11 @@ teleport:
   {% if node_type in ["main_proxy", "ssh", "k8s", "application"] %}
   ca_pin: {{ ca_pin | mandatory}}
   auth_token: {{ auth_token | mandatory }}
+  {% endif %}
+  
+  {% if auto_generated_ca_pin and auto_generated_token %}
+  ca_pin: {{ auto_generated_ca_pin }}
+  auth_token: {{ auto_generated_token }}
   {% endif %}
   
 {% if node_type in ["main_proxy", "leaf"] %}

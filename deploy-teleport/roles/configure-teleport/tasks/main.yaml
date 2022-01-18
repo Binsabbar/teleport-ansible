@@ -30,6 +30,7 @@
     insertafter: '^[Service].*$'
     line: "EnvironmentFile=-/etc/default/teleport"
   become: true
+  when: node_type in ['main_auth', 'leaf']
 
 - name: Copy teleport to /etc/teleport.yaml
   template:
@@ -61,3 +62,38 @@
   command: "tctl create {{ data_dir }}/trusted_cluster.yaml"
   become: true
   when: node_type in ['leaf']
+
+- name: register ssh_node for node_type main_auth and leaf
+  debug: "Now I will register ssh_node for node_type main_auth and leaf"
+  when: node_type in ['main_auth', 'leaf'] 
+
+- name: Generate shortlive token
+  command: tctl tokens add --type=node --ttl=5m
+  become: true
+  when: node_type in ['main_auth', 'leaf']
+  register: join_token
+
+- name: "Setting auto generating config values into Ansible Fact"
+  set_fact:
+    auto_generated_auth_token: "{{ join_token.stdout | regex_search('token=(.+) ', '\\1') | first }}"
+    auto_generated_ca_pin: "{{ join_token.stdout | regex_search('ca-pin=(.+) ', '\\1') | first }}"
+    auto_generated_auth_server: "{{ join_token.stdout | regex_search('auth-server=(.+)', '\\1') | first }}"
+  when: node_type in ['main_auth', 'leaf']
+
+- name: Copy teleport to /etc/teleport.yaml
+  template:
+    src: "teleport.yaml.j2"
+    dest: "/etc/teleport.yaml"
+    owner: teleport
+    group: teleport
+    mode: 0600
+  become: true
+  when: node_type in ['main_auth', 'leaf']
+
+- name: Restart service teleport
+  systemd:
+    daemon_reload: true
+    state: restarted
+    name: teleport
+  become: true
+  when: node_type in ['main_auth', 'leaf']
