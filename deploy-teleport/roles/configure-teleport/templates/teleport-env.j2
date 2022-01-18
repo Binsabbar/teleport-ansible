@@ -1,2 +1,3 @@
 AWS_ACCESS_KEY_ID={{ auth_node.s3.access_key | mandatory }}
 AWS_SECRET_ACCESS_KEY={{ auth_node.s3.access_secret | mandatory }}
+AWS_REGION={{ auth_node.s3.region | default("me-jeddah-1") }}

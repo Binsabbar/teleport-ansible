@@ -24,7 +24,7 @@
   become: true
   when: auth_node.copy_license_from_local_file is defined and auth_node.copy_license_from_local_file.enable
 
-- name: Set AWS Creds as ENV
+- name: Set AWS Creds as ENV in /etc/default/teleport
   template:
     src: "teleport-env.j2"
     dest: "/etc/default/teleport"
