@@ -41,6 +41,7 @@ auth_node:
     url: ""
     access_key: ""
     access_secret: ""
+    region: ""
   client_idle_timeout: 1h
   disconnect_expired_cert: no
   keep_alive_interval: 5m
