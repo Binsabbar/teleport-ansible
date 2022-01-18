@@ -74,7 +74,8 @@
   when: node_type in ['leaf']
 
 - name: register ssh_node for node_type main_auth and leaf
-  debug: "Now I will register ssh_node for node_type main_auth and leaf"
+  debug: 
+    msg: "Now I will register ssh_node for node_type main_auth and leaf"
   when: node_type in ['main_auth', 'leaf'] 
 
 - name: Generate shortlive token
@@ -85,8 +86,8 @@
 
 - name: "Setting auto generating config values into Ansible Fact"
   set_fact:
-    auto_generated_auth_token: "{{ join_token.stdout | regex_search('token=(.+) ', '\\1') | first }}"
-    auto_generated_ca_pin: "{{ join_token.stdout | regex_search('ca-pin=(.+) ', '\\1') | first }}"
+    auto_generated_token: "{{ join_token.stdout | regex_search('token=(\\S+)', '\\1') | first }}"
+    auto_generated_ca_pin: "{{ join_token.stdout | regex_search('ca-pin=(\\S+)', '\\1') | first }}"
     auto_generated_auth_server: "{{ join_token.stdout | regex_search('auth-server=(.+)', '\\1') | first }}"
   when: node_type in ['main_auth', 'leaf']
 

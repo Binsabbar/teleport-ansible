@@ -28,7 +28,7 @@ teleport:
   {% endif %}
 
   {% if node_type in ["main_auth", "leaf"] %}
-  auth_servers: [{{ auto_generated_auth_server | default("localhost:3025") }}]
+  auth_servers: ["{{ auto_generated_auth_server | default("localhost:3025")}}"]
   {% endif %}
   
   {% if node_type in ["main_proxy", "ssh", "k8s", "application"] %}
