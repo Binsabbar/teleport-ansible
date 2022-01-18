@@ -14,6 +14,16 @@
       - application
   run_once: true
 
+- name: "Copy teleport license file"
+  copy:
+    src: "{{ auth_node.copy_license_from_local_file.local_path }}"
+    dest: "{{ auth_node.license_file }}"
+    owner: teleport
+    group: teleport
+    mode: 0600
+  become: true
+  when: auth_node.copy_license_from_local_file is defined and auth_node.copy_license_from_local_file.enable
+
 - name: Set AWS Creds as ENV
   template:
     src: "teleport-env.j2"

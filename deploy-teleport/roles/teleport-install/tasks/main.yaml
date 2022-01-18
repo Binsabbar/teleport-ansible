@@ -5,7 +5,7 @@
     uid: 1010
   become: true
 
-- name: Install teleport
+- name: "Install teleport {{ teleport_version }}"
   apt: 
     deb: "https://get.gravitational.com/teleport_{{ teleport_version | default('7.3.2') }}_amd64.deb"
   become: true
